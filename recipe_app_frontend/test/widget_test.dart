@@ -1,18 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:recipe_app_frontend/main.dart';
+import 'package:provider/provider.dart';
+import 'package:recipe_app_frontend/src/app.dart';
+import 'package:recipe_app_frontend/src/state/recipe_store.dart';
 
 void main() {
-  testWidgets('App generation message displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App boots and shows Explore header', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => RecipeStore()..init(),
+        child: const RecipeApp(),
+      ),
+    );
 
-    expect(find.text('recipe_app_frontend App is being generated...'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
+    // Let initial build happen (store may still be initializing but UI should render).
+    await tester.pump();
 
-  testWidgets('App bar has correct title', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
-
-    expect(find.text('recipe_app_frontend'), findsOneWidget);
+    expect(find.text('Explore Recipes'), findsOneWidget);
   });
 }
